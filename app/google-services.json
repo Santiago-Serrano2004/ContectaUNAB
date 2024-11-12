@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "539532099988",
+    "project_id": "conecta-unab",
+    "storage_bucket": "conecta-unab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539532099988:android:25f1cdd7e74c75ae928f81",
+        "android_client_info": {
+          "package_name": "co.edu.unab.santiagoserrano.contectaunab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbJS8D3dL4HXene4kkpPb9Dpm1PXyDPug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
