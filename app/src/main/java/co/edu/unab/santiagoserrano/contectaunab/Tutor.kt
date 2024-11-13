@@ -5,8 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.runtime.*
+import androidx.room.Delete
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,22 +49,12 @@ fun StudentMainScreen() {
                         .padding(paddingValues) // Respetamos los valores de padding del Scaffold
                 ) {
                     StudentMainContent()
+                    AreasExperticiaScreen()
                 }
             }
                 ,
             bottomBar = { StudentMainNavBar() })
 
-
-
-
-//        Column(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            StudentMainHeader()
-//            StudentMainContent()
-//            StudentMainNavBar()
-//        }
     }
 }
 
@@ -154,14 +148,51 @@ fun PerfilTutor() {
 @Preview
 @Composable
 fun TutoriasProgramadas() {
+    // Estado para mostrar o no el botón de cancelación
     var showCancelButton by remember { mutableStateOf(false) }
 
+    // Estado para manejar las tutorías programadas (lista mutable)
+    var tutorias by remember { mutableStateOf(
+        listOf(
+            Tutoría("Ecuaciones Diferenciales", "vie. 16 agosto 2-3 p.m", "Nombre Estudiante", "Lugar de encuentro"),
+            // Agrega más tutorías si es necesario
+        )
+    )}
+
+    Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Text("Tutorias Programadas")
+    }
+
+    // Mostrar las tutorías programadas
+    LazyColumn {
+        items(tutorias) { tutoría ->
+            TutoríaCard(
+                tutoría = tutoría,
+                showCancelButton = showCancelButton,
+                onCancelClick = { tutoría ->
+                    // Lógica para cancelar la tutoría
+                    tutorias = tutorias.filterNot { it == tutoría } // Elimina la tutoría de la lista
+                    showCancelButton = false // Cierra el botón de cancelación
+                },
+                onClick = { showCancelButton = !showCancelButton }
+            )
+        }
+    }
+}
+
+@Composable
+fun TutoríaCard(
+    tutoría: Tutoría,
+    showCancelButton: Boolean,
+    onCancelClick: (Tutoría) -> Unit,
+    onClick: () -> Unit
+) {
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { showCancelButton = !showCancelButton },
+            .clickable { onClick() }, // Cambiar el estado al hacer clic
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
     ) {
@@ -189,17 +220,17 @@ fun TutoriasProgramadas() {
                 // Información de la tutoría
                 Column {
                     Text(
-                        text = "Ecuaciones Diferenciales",
+                        text = tutoría.nombre,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "vie. 16 agosto 2-3 p.m",
+                        text = tutoría.fecha,
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
                     Text(
-                        text = "Nombre Estudiante, Lugar de encuentro",
+                        text = "${tutoría.estudiante}, ${tutoría.lugar}",
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
@@ -210,9 +241,7 @@ fun TutoriasProgramadas() {
             if (showCancelButton) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = {
-                        // Lógica para cancelar la tutoría
-                    },
+                    onClick = { onCancelClick(tutoría) }, // Al hacer clic, elimina la tutoría
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
@@ -227,6 +256,14 @@ fun TutoriasProgramadas() {
         }
     }
 }
+
+data class Tutoría(
+    val nombre: String,
+    val fecha: String,
+    val estudiante: String,
+    val lugar: String
+)
+
 @Preview
 @Composable
 fun StudentMainNavBar() {
@@ -262,6 +299,132 @@ fun StudentMainNavBar() {
     }
 
 }
+data class AreaExperticia(
+    val id: Int,
+    val nombre: String,
+    val promedio: Double? = null // Promedio opcional
+)
+
+
+@Composable
+fun AreasExperticiaScreen() {
+    var areas by remember { mutableStateOf(listOf<AreaExperticia>()) }
+    var modoEdicion by remember { mutableStateOf(false) }
+    var areaSeleccionada by remember { mutableStateOf<AreaExperticia?>(null) }
+    var nuevaArea by remember { mutableStateOf("") }
+    var showDeleteDialog by remember { mutableStateOf(false) }  // Estado para mostrar el dialogo de eliminación
+    var areaAEliminar by remember { mutableStateOf<AreaExperticia?>(null) } // Área seleccionada para eliminar
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Areas de experticia")
+        LazyColumn {
+            items(areas) { area ->
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                    onClick = {
+                        // Open edit dialog with options to edit or delete
+                        modoEdicion = true
+                        areaSeleccionada = area
+                    }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = area.nombre)
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(onClick = {
+                            // Set the area to be deleted
+                            areaAEliminar = area
+                            showDeleteDialog = true // Show the confirmation dialog
+                        }) {
+                            Icon(painter = painterResource(id = R.drawable.borrar), contentDescription = "Eliminar", tint = Color.Unspecified)
+                        }
+                    }
+                }
+            }
+        }
+
+        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+            Button(onClick = {
+                modoEdicion = true
+                areaSeleccionada = null
+            }) {
+                Text("Agregar Materia")
+            }
+        }
+
+        if (modoEdicion) {
+            AlertDialog(
+                onDismissRequest = { modoEdicion = false },
+                title = { if (areaSeleccionada != null) Text("Editar Materia") else Text("Agregar Materia") },
+                text = {
+                    TextField(
+                        value = nuevaArea,
+                        onValueChange = { nuevaArea = it },
+                        label = { Text("Nombre de la Materia") }
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (nuevaArea.isNotEmpty()) {
+                            if (areaSeleccionada == null) {
+                                areas = areas + AreaExperticia(areas.size + 1, nuevaArea)
+                            } else {
+                                val index = areas.indexOf(areaSeleccionada)
+                                areas = areas.toMutableList().apply {
+                                    set(index, areaSeleccionada!!.copy(nombre = nuevaArea))
+                                }
+                            }
+                            nuevaArea = ""
+                            modoEdicion = false
+                        }
+                    }) {
+                        Text("Guardar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        modoEdicion = false
+                        nuevaArea = ""
+                    }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+
+
+        if (showDeleteDialog && areaAEliminar != null) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Confirmar") },
+                text = { Text("¿Eliminar ${areaAEliminar?.nombre}?") },
+                confirmButton = {
+                    Button(onClick = {
+                        areas = areas.filterNot { it == areaAEliminar }
+                        showDeleteDialog = false
+                    }) {
+                        Text("Eliminar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showDeleteDialog = false
+                    }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+    }
+}
+
 
 private val Typography = Typography(
     bodyLarge = androidx.compose.ui.text.TextStyle(
@@ -277,4 +440,6 @@ private val Shapes = Shapes(
     medium = RoundedCornerShape(4.dp),
     large = RoundedCornerShape(0.dp)
 )
+
+
 
