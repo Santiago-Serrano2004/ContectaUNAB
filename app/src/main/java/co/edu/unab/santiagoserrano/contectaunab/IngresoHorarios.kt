@@ -1,4 +1,4 @@
-/*
+
 package co.edu.unab.santiagoserrano.contectaunab
 
 import androidx.compose.foundation.background
@@ -25,28 +25,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
-fun ScheduleScreen(horario: Horario,onDaySelected: (String) -> Unit,
-                   onHourSelected: (String) -> Unit) {
+fun IngresoHorario() {
 
     var expandedDay by remember { mutableStateOf(false) }
     var expandedHour by remember { mutableStateOf(false) }
 
     var selectedDay by remember { mutableStateOf("Selecciona el día") }
     var selectedHour by remember { mutableStateOf("Selecciona la hora") }
+    var onDaySelected by remember { mutableStateOf("") }
+    var onHourSelected by remember { mutableStateOf("") }
 
     // Lista de días de lunes a viernes
     val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes")
 
     // Lista de horas de 6 AM a 9 PM
-    val hoursOfDay = (6..21).map { hour ->
-        val period = if (hour < 12) "AM" else "PM"
-        val adjustedHour = if (hour > 12) hour - 12 else hour
-        "$adjustedHour:00 $period"
-    }
-
+    val hoursOfDay = listOf(
+        "6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM",
+        "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
+        "6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"
+    )
+    Column()
+    {
     // Dropdown para los días de la semana
     Box {
         Text(
@@ -63,18 +64,19 @@ fun ScheduleScreen(horario: Horario,onDaySelected: (String) -> Unit,
             onDismissRequest = { expandedDay = false }
         ) {
             daysOfWeek.forEach { day ->
-                DropdownMenuItem(onClick =
+
+                DropdownMenuItem(text = { Text(day) }, onClick =
                 {
                     selectedDay = day
-                    onDaySelected(day)
+                    onDaySelected = day
                     expandedDay = false
-                    })
-                {
-                    Text(text = day)
-                }
+                })
             }
         }
     }
+
+
+
 
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -94,15 +96,15 @@ fun ScheduleScreen(horario: Horario,onDaySelected: (String) -> Unit,
             onDismissRequest = { expandedHour = false }
         ) {
             hoursOfDay.forEach { hour ->
-                DropdownMenuItem(onClick = {
+                DropdownMenuItem(text = { Text(hour) }, onClick = {
                     selectedHour = hour
-                    onHourSelected(hour)
+                    onHourSelected = hour
                     expandedHour = false
-                }) {
-                    Text(text = hour)
-                }
+                })
+
             }
         }
     }
 }
-*/
+}
+
