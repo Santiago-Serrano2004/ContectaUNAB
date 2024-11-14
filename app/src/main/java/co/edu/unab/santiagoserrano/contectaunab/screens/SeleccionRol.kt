@@ -42,7 +42,10 @@ fun RoleSelectionScreen(onRoleSelected: (String) -> Unit, navController: NavCont
         RoleCard(
             role = "Estudiante",
             imageRes = R.drawable.estudiante_image, // Reemplaza con el recurso de imagen para Estudiante
-            onClick = { onRoleSelected("Estudiante") }
+            onClick = {
+                onRoleSelected("Estudiante")
+                navController.navigate(AppScreens.PantallaPrincipalEstudiante.route)
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

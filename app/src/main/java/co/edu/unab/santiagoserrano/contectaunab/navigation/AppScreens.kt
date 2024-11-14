@@ -10,5 +10,5 @@ sealed class AppScreens (val route: String) {
     object PantallaLogin: AppScreens("PantallaLogin")
     object PantallaRegistro: AppScreens("PantallaRegistro")
     object PantallaSeleccionRol: AppScreens("PantallaSeleccionRol")
-
+    object PantallaPrincipalEstudiante: AppScreens("PantallaPrincipalEstudiante")
 }

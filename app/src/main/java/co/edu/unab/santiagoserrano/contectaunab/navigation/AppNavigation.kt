@@ -16,6 +16,7 @@ import co.edu.unab.santiagoserrano.contectaunab.screens.IngresoHorario
 import co.edu.unab.santiagoserrano.contectaunab.screens.LoginScreen
 import co.edu.unab.santiagoserrano.contectaunab.screens.Notifications
 import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaCarga
+import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaPrincipalEstudiante
 import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaPrincipalTutor
 import co.edu.unab.santiagoserrano.contectaunab.screens.Profile
 import co.edu.unab.santiagoserrano.contectaunab.screens.RegistrationScreen
@@ -56,9 +57,15 @@ fun AppNavigation() {
         composable(AppScreens.PantallaLogin.route){
             LoginScreen(navController)
         }
+
         composable(AppScreens.PantallaRegistro.route){
             RegistrationScreen(navController)
         }
+
+        composable(AppScreens.PantallaPrincipalEstudiante.route){
+            PantallaPrincipalEstudiante(navController)
+        }
+
         composable(AppScreens.PantallaSeleccionRol.route){
             RoleSelectionScreen(onRoleSelected = { /* Manejo de selección */ }, navController)
         }
