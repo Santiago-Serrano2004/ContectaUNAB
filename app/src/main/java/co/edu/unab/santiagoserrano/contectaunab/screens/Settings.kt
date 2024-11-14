@@ -1,4 +1,4 @@
-package co.edu.unab.santiagoserrano.contectaunab.navigation
+package co.edu.unab.santiagoserrano.contectaunab.screens
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

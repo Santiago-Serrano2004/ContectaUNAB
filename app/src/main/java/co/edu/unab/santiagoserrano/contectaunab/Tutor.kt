@@ -256,16 +256,16 @@ fun StudentMainNavBar(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.navigate(AppScreens.PantallaPrincipalTutor)}) {
+            IconButton(onClick = { navController.navigate(AppScreens.PantallaPrincipalTutor.route)}) {
                 Icon(painter = homeIcon, contentDescription = "Home", tint = Color.White)
             }
-            IconButton(onClick = { navController.navigate(AppScreens.Notifications) }) {
+            IconButton(onClick = { navController.navigate(AppScreens.Notifications.route) }) {
                 Icon(painter = notificationIcon, contentDescription = "Notifications", tint = Color.White)
             }
-            IconButton(onClick = {  navController.navigate(AppScreens.Settings) }) {
+            IconButton(onClick = {  navController.navigate(AppScreens.Settings.route) }) {
                 Icon(painter = settingsIcon, contentDescription = "Settings", tint = Color.White)
             }
-            IconButton(onClick = { navController.navigate(AppScreens.Profile) }) {
+            IconButton(onClick = { navController.navigate(AppScreens.Profile.route) }) {
                 Icon(painter = profileIcon, contentDescription = "Profile", tint = Color.Unspecified)
             }
         }

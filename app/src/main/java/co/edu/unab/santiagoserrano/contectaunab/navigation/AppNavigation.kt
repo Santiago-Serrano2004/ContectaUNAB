@@ -4,7 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import co.edu.unab.santiagoserrano.contectaunab.screens.Notifications
 import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaPrincipalTutor
+import co.edu.unab.santiagoserrano.contectaunab.screens.Profile
+import co.edu.unab.santiagoserrano.contectaunab.screens.Settings
 
 @Composable
 fun AppNavigation() {
