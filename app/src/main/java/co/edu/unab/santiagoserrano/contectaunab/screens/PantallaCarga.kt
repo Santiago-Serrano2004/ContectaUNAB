@@ -26,7 +26,7 @@ fun PantallaCarga(navController: NavController){
     LaunchedEffect(key1 = true) {
         delay(3000)
         navController.popBackStack()
-        navController.navigate(AppScreens.PantallaPrincipalTutor.route)
+        navController.navigate(AppScreens.PantallaInicio.route)
     }
 
 

@@ -1,4 +1,4 @@
-package co.edu.unab.santiagoserrano.contectaunab
+package co.edu.unab.santiagoserrano.contectaunab.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,12 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import co.edu.unab.santiagoserrano.contectaunab.R
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
 
 
 @Composable
-fun RoleSelectionScreen(onRoleSelected: (String) -> Unit) {
+fun RoleSelectionScreen(onRoleSelected: (String) -> Unit, navController: NavController) {
     // Pantalla completa con fondo morado
     Column(
         modifier = Modifier
@@ -50,7 +51,10 @@ fun RoleSelectionScreen(onRoleSelected: (String) -> Unit) {
         RoleCard(
             role = "Tutor",
             imageRes = R.drawable.tutor_image, // Reemplaza con el recurso de imagen para Tutor
-            onClick = { onRoleSelected("Tutor") }
+            onClick = {
+                onRoleSelected("Tutor")
+                navController.navigate(AppScreens.PantallaPrincipalTutor.route)
+            }
         )
     }
 }

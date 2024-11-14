@@ -2,7 +2,8 @@ package co.edu.unab.santiagoserrano.contectaunab
 
 import co.edu.unab.santiagoserrano.contectaunab.ui.theme.User
 
-class Estudiante (
+class
+Estudiante (
     name:String,
     id:String,
     password:String,

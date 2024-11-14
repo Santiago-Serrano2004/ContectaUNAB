@@ -1,8 +1,5 @@
-package co.edu.unab.santiagoserrano.contectaunab
+package co.edu.unab.santiagoserrano.contectaunab.screens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,9 +17,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.ui.text.style.TextAlign
-@Preview
+import androidx.navigation.NavController
+import co.edu.unab.santiagoserrano.contectaunab.R
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
+
+
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +51,7 @@ fun WelcomeScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { /* Acción para ingresar */ },
+            onClick = { navController.navigate(AppScreens.PantallaLogin.route)},
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
@@ -63,7 +64,7 @@ fun WelcomeScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Acción para registrarse */ },
+            onClick = { navController.navigate(AppScreens.PantallaRegistro.route) },
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier

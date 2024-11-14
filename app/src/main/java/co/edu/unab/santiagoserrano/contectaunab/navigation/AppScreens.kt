@@ -6,5 +6,9 @@ sealed class AppScreens (val route: String) {
     object Profile: AppScreens("Profile")
     object Settings: AppScreens("Settings")
     object PantallaCarga: AppScreens("PantallaCarga")
+    object PantallaInicio: AppScreens("PantallaIncio")
+    object PantallaLogin: AppScreens("PantallaLogin")
+    object PantallaRegistro: AppScreens("PantallaRegistro")
+    object PantallaSeleccionRol: AppScreens("PantallaSeleccionRol")
 
 }

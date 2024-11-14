@@ -1,5 +1,6 @@
-package co.edu.unab.santiagoserrano.contectaunab
+package co.edu.unab.santiagoserrano.contectaunab.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,18 +16,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import co.edu.unab.santiagoserrano.contectaunab.R
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
 
 
-@Preview
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -40,14 +44,11 @@ fun LoginScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo Placeholder
-            Text(
-                text = "CONECTA\nunab",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 24.dp)
+            Image(
+                painter = painterResource(id = R.drawable.unab_logo),
+                contentDescription = "Logo UNAB",
+                modifier = Modifier.size(250.dp),
+                alignment = Alignment.CenterEnd
             )
 
             // Title
@@ -87,7 +88,7 @@ fun LoginScreen() {
 
             // Login Button
             Button(
-                onClick = {},
+                onClick = {navController.navigate(AppScreens.PantallaSeleccionRol.route)},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
