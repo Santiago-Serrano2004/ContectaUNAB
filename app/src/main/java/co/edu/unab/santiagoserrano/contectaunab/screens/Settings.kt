@@ -23,6 +23,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import co.edu.unab.santiagoserrano.contectaunab.R
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun Settings(navController: NavController) {
@@ -104,25 +106,28 @@ fun Settings(navController: NavController) {
 
         // Modify Schedule Button
         Button(
-            onClick = { /* TODO: Handle modify schedule action */ },
+            onClick = {
+                FirebaseAuth.getInstance().signOut() // Cerrar sesión del usuario en Firebase
+                navController.navigate(AppScreens.PantallaInicio.route) {
+                    popUpTo(0) // Esto limpia el historial de navegación
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
+                .padding(bottom = 20.dp)
                 .height(48.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(Color.Black)
         ) {
             Text(
-                text = "MODIFICAR HORARIO",
+                text = "Cerrar Sesion",
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
         }
+
+        Spacer(modifier = Modifier.size(20.dp))
+
     }
-}
-
-@Preview
-@Composable
-fun Rowfun(){
-
 }

@@ -20,6 +20,8 @@ import androidx.navigation.NavController
 import co.edu.unab.santiagoserrano.contectaunab.R
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
@@ -33,57 +35,54 @@ fun RegistrationScreen(navController: NavController) {
     var name by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
-    fun registerUser() {
-        // Verificar si los campos están vacíos
-        if (email.isBlank() || password.isBlank() || confirmPassword.isBlank() || name.isBlank()) {
-            errorMessage = "Todos los campos son obligatorios."
-            return
-        }
+    fun registerUser(name: String, email: String, password: String) {
+        val auth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
 
-        // Verificar si las contraseñas coinciden
-        if (password != confirmPassword) {
-            errorMessage = "Las contraseñas no coinciden"
-            return
-        }
-
-        // Validar el formato del email
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            errorMessage = "Por favor ingrese un correo electrónico válido."
-            return
-        }
-
-        // Intentar crear el usuario
+        // Registro del usuario en Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Si la creación del usuario fue exitosa
+                    // Obtener el UID del usuario registrado
                     val userId = auth.currentUser?.uid
-                    val user = mapOf(
-                        "name" to name,
-                        "email" to email,
-                        "rol" to "estudiante"
-                    )
 
-                    userId?.let {
-                        // Guardar los datos del usuario en Firestore
-                        db.collection("users").document(it).set(user)
-                            .addOnSuccessListener {
-                                // Navegar a la pantalla de selección de rol
-                                navController.navigate(AppScreens.PantallaSeleccionRol.route)
+                    // Actualizar el perfil para incluir el nombre del usuario
+                    val userProfileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+
+                    auth.currentUser?.updateProfile(userProfileUpdates)
+                        ?.addOnCompleteListener { profileUpdateTask ->
+                            if (profileUpdateTask.isSuccessful) {
+                                // Guardar datos del usuario en Firestore (sin la contraseña)
+                                val userData = mapOf(
+                                    "name" to name,
+                                    "email" to email,
+                                    "role" to "student" // ejemplo de campo adicional
+                                )
+
+                                userId?.let {
+                                    db.collection("users").document(it).set(userData)
+                                        .addOnSuccessListener {
+                                            Log.d("Firestore", "Datos del usuario guardados exitosamente.")
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.e("FirestoreError", "Error al guardar en Firestore: ${exception.message}")
+                                        }
+                                }
+                            } else {
+                                Log.e("ProfileError", "Error al actualizar el perfil: ${profileUpdateTask.exception?.message}")
                             }
-                            .addOnFailureListener { exception ->
-                                // Error al guardar en Firestore
-                                errorMessage = "Error al guardar datos en Firestore: ${exception.message}"
-                                Log.e("FirestoreError", exception.message ?: "Unknown error")
-                            }
-                    }
+                        }
+                    navController.navigate(AppScreens.PantallaSeleccionRol.route)
                 } else {
-                    // Mostrar el mensaje de error si la creación del usuario falla
-                    errorMessage = task.exception?.message ?: "Error al registrarse"
-                    Log.e("RegistrationError", task.exception?.toString() ?: "Unknown error")
+                    Log.e("AuthError", "Error al registrar usuario: ${task.exception?.message}")
                 }
             }
     }
+
+
+
 
 
     Box(
@@ -174,7 +173,9 @@ fun RegistrationScreen(navController: NavController) {
 
             // Botón de registro
             Button(
-                onClick = { registerUser() },
+                onClick = {
+                    registerUser(name, email, password)
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),

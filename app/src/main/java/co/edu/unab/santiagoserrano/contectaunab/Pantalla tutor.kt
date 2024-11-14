@@ -254,8 +254,8 @@ fun StudentMainNavBar(navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp)
-                .padding(20.dp),
+                .height(120.dp)
+                .padding(bottom = 40.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
