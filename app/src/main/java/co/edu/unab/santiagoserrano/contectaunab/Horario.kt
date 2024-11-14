@@ -1,6 +1,6 @@
 package co.edu.unab.santiagoserrano.contectaunab
 
-class Horario (
+data class Horario (
     val lunes: MutableList<Boolean> = MutableList(15) { false },
     val martes: MutableList<Boolean> = MutableList(15) { false },
     val miercoles: MutableList<Boolean> = MutableList(15) { false },

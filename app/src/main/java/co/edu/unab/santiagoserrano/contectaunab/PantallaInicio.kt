@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.ui.text.style.TextAlign
-
+@Preview
 @Composable
 fun WelcomeScreen() {
     Column(

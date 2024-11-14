@@ -1,117 +1,399 @@
 package co.edu.unab.santiagoserrano.contectaunab
 
-import androidx.compose.foundation.layout.R
-
-
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.runtime.*
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
 
-/*
-class PantallaTutor {
 
-    @Composable
-    fun PantallaTutor1() {
-        Column(
+@Composable
+fun StudentMainHeader() { // Agrega los recursos necesarios aquí
+    val logoImage: Painter = painterResource(id = R.drawable.conecta_unab2)
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF6A0DAD))
+            .size(100.dp)
+            .height(200.dp)
+            .padding(10.dp)
+            .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+    ) {
+        Image(
+            painter = logoImage,
+            contentDescription = "Conecta UNAB Logo",
+            modifier = Modifier.size(150.dp)
+        )
+    }
+}
+
+@Composable
+fun StudentMainContent() {
+    PerfilTutor()
+    TutoriasProgramadas()
+}
+
+@Preview
+@Composable
+fun PerfilTutor() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Imagen circular
+        Image(
+            painter = painterResource(id = R.drawable.profile_icon), // Reemplaza con el recurso de tu imagen
+            contentDescription = "Foto del Tutor",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header con el logo y saludo
-            HeaderSection()
+                .size(64.dp)
+                .clip(CircleShape)
+        )
 
-            // Lista de tutoriales programados
-            TutorialesProgramados()
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Textos de bienvenida y nombre del tutor
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = "Bienvenido!",
+                fontSize = 18.sp
+            )
+            Text(
+                text = "Nombre Tutor",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Calificación con estrellas
+        Row {
+            repeat(3) { // Estrellas doradas
+                Icon(
+                    painter = painterResource(id = R.drawable.estrella), // Reemplaza con el recurso de tu estrella
+                    contentDescription = "Estrella dorada",
+                    tint = Color(0xFFFFD700),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            repeat(2) { // Estrellas grises
+                Icon(
+                    painter = painterResource(id = R.drawable.estrella), // Reemplaza con el recurso de tu estrella
+                    contentDescription = "Estrella gris",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
+}
 
-    @Composable
-    fun HeaderSection() {
+@Preview
+@Composable
+fun TutoriasProgramadas() {
+    // Estado para mostrar o no el botón de cancelación
+    var showCancelButton by remember { mutableStateOf(false) }
+
+    // Estado para manejar las tutorías programadas (lista mutable)
+    var tutorias by remember { mutableStateOf(
+        listOf(
+            Tutoria("Ecuaciones Diferenciales", "vie. 16 agosto 2-3 p.m", "Nombre Estudiante", "Lugar de encuentro"),
+            // Agrega más tutorías si es necesario
+        )
+    )}
+
+    Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Text("Tutorias Programadas")
+    }
+
+    // Mostrar las tutorías programadas
+    LazyColumn {
+        items(tutorias) { tutoria ->
+            TutoriaCard(
+                tutoria = tutoria,
+                showCancelButton = showCancelButton,
+                onCancelClick = { tutoria ->
+                    // Lógica para cancelar la tutoría
+                    tutorias = tutorias.filterNot { it == tutoria } // Elimina la tutoría de la lista
+                    showCancelButton = false // Cierra el botón de cancelación
+                },
+                onClick = { showCancelButton = !showCancelButton }
+            )
+        }
+    }
+}
+
+@Composable
+fun TutoriaCard(
+    tutoria: Tutoria,
+    showCancelButton: Boolean,
+    onCancelClick: (Tutoria) -> Unit,
+    onClick: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() }, // Cambiar el estado al hacer clic
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Ícono de la tutoría
+                Icon(
+                    painter = painterResource(id = R.drawable.birrete), // Reemplaza con el recurso de tu ícono
+                    contentDescription = "Icono de Tutoría",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray.copy(alpha = 0.3f)),
+                    tint = Color.Black
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Información de la tutoría
+                Column {
+                    Text(
+                        text = tutoria.nombre,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = tutoria.fecha,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "${tutoria.estudiante}, ${tutoria.lugar}",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            // Botón de cancelar
+            if (showCancelButton) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { onCancelClick(tutoria) }, // Al hacer clic, elimina la tutoría
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "CANCELAR",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class Tutoria(
+    val nombre: String,
+    val fecha: String,
+    val estudiante: String,
+    val lugar: String
+)
+
+@Composable
+fun StudentMainNavBar(navController: NavController) {
+
+
+    val homeIcon: Painter = painterResource(id = R.drawable.home_icon)
+    val notificationIcon: Painter = painterResource(id = R.drawable.notification_icon)
+    val settingsIcon: Painter = painterResource(id = R.drawable.settings_icon)
+    val profileIcon: Painter = painterResource(id = R.drawable.profile_icon)
+    Box(modifier = Modifier
+        .background(Color(0xFF6A0DAD)), // Purple background
+        contentAlignment = Alignment.Center){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF6A1B9A)) // Color púrpura del encabezado
-                .padding(16.dp),
+                .height(70.dp)
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.unab_logo), // Reemplaza con la imagen del tutor
-                contentDescription = "Tutor",
-                modifier = Modifier.size(50.dp),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = "Bienvenido!",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = "Nombre Tutor",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
+            IconButton(onClick = { navController.navigate(AppScreens.PantallaPrincipalTutor.route)}) {
+                Icon(painter = homeIcon, contentDescription = "Home", tint = Color.White)
+            }
+            IconButton(onClick = { navController.navigate(AppScreens.Notifications.route) }) {
+                Icon(painter = notificationIcon, contentDescription = "Notifications", tint = Color.White)
+            }
+            IconButton(onClick = {  navController.navigate(AppScreens.Settings.route) }) {
+                Icon(painter = settingsIcon, contentDescription = "Settings", tint = Color.White)
+            }
+            IconButton(onClick = { navController.navigate(AppScreens.Profile.route) }) {
+                Icon(painter = profileIcon, contentDescription = "Profile", tint = Color.Unspecified)
             }
         }
     }
 
-    @Composable
-    fun TutorialesProgramados() {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            // Ejemplo de un tutorial
-            TutorialCard(titulo = "Ecuaciones Diferenciales", descripcion = "Lunes, 3:00 PM - 4:00 PM")
-            TutorialCard(titulo = "Desarrollo Multimedia", descripcion = "Martes, 10:00 AM - 11:00 AM")
-            TutorialCard(titulo = "Electromagnetismo", descripcion = "Miércoles, 2:00 PM - 3:00 PM")
-        }
-    }
+}
+data class AreaExperticia(
+    val id: Int,
+    val nombre: String,
+    val promedio: Double? = null // Promedio opcional
+)
 
-    @Composable
-    fun TutorialCard(titulo: String, descripcion: String) {
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            backgroundColor = Color.LightGray,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(text = titulo, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(text = descripcion, fontSize = 14.sp)
-                }
-                Button(
-                    onClick = { */
-/* Acción de cancelación *//*
- },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+
+@Composable
+fun AreasExperticiaScreen() {
+    var areas by remember { mutableStateOf(listOf<AreaExperticia>()) }
+    var modoEdicion by remember { mutableStateOf(false) }
+    var areaSeleccionada by remember { mutableStateOf<AreaExperticia?>(null) }
+    var nuevaArea by remember { mutableStateOf("") }
+    var showDeleteDialog by remember { mutableStateOf(false) }  // Estado para mostrar el dialogo de eliminación
+    var areaAEliminar by remember { mutableStateOf<AreaExperticia?>(null) } // Área seleccionada para eliminar
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Areas de experticia")
+        LazyColumn {
+            items(areas) { area ->
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                    onClick = {
+                        // Open edit dialog with options to edit or delete
+                        modoEdicion = true
+                        areaSeleccionada = area
+                    }
                 ) {
-                    Text(text = "CANCELAR", color = Color.White)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = area.nombre)
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(onClick = {
+                            // Set the area to be deleted
+                            areaAEliminar = area
+                            showDeleteDialog = true // Show the confirmation dialog
+                        }) {
+                            Icon(painter = painterResource(id = R.drawable.borrar), contentDescription = "Eliminar", tint = Color.Unspecified, modifier = Modifier.size(25.dp))
+                        }
+                    }
                 }
             }
         }
+
+        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+            Button(onClick = {
+                modoEdicion = true
+                areaSeleccionada = null
+            }) {
+                Text("Agregar Materia")
+            }
+        }
+
+        if (modoEdicion) {
+            AlertDialog(
+                onDismissRequest = { modoEdicion = false },
+                title = { if (areaSeleccionada != null) Text("Editar Materia") else Text("Agregar Materia") },
+                text = {
+                    TextField(
+                        value = nuevaArea,
+                        onValueChange = { nuevaArea = it },
+                        label = { Text("Nombre de la Materia") }
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (nuevaArea.isNotEmpty()) {
+                            if (areaSeleccionada == null) {
+                                areas = areas + AreaExperticia(areas.size + 1, nuevaArea)
+                            } else {
+                                val index = areas.indexOf(areaSeleccionada)
+                                areas = areas.toMutableList().apply {
+                                    set(index, areaSeleccionada!!.copy(nombre = nuevaArea))
+                                }
+                            }
+                            nuevaArea = ""
+                            modoEdicion = false
+                        }
+                    }) {
+                        Text("Guardar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        modoEdicion = false
+                        nuevaArea = ""
+                    }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+
+
+        if (showDeleteDialog && areaAEliminar != null) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Confirmar") },
+                text = { Text("¿Eliminar ${areaAEliminar?.nombre}?") },
+                confirmButton = {
+                    Button(onClick = {
+                        areas = areas.filterNot { it == areaAEliminar }
+                        showDeleteDialog = false
+                    }) {
+                        Text("Eliminar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showDeleteDialog = false
+                    }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
     }
-}*/
+}
