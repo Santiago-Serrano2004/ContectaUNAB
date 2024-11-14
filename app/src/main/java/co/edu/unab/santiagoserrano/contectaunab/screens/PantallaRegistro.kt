@@ -19,16 +19,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import co.edu.unab.santiagoserrano.contectaunab.R
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
-import co.edu.unab.santiagoserrano.contectaunab.ui.theme.User
+import co.edu.unab.santiagoserrano.contectaunab.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun RegistrationScreen(navController: NavController) {
-    val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+    val auth = Firebase.auth
+    val db = Firebase.firestore
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -37,8 +39,8 @@ fun RegistrationScreen(navController: NavController) {
     var errorMessage by remember { mutableStateOf("") }
 
     fun registerUser(name: String, email: String, password: String) {
-        val auth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
+        val auth = Firebase.auth
+        val db = Firebase.firestore // Usando el acceso directo a Firestore
 
         // Registro del usuario en Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
@@ -56,18 +58,18 @@ fun RegistrationScreen(navController: NavController) {
                         ?.addOnCompleteListener { profileUpdateTask ->
                             if (profileUpdateTask.isSuccessful) {
                                 // Guardar datos del usuario en Firestore (sin la contraseña)
-                                val userData = User(name=name,password=password,email=email)
+                                val user = User(name=name, password = password,email=email)
 
-
-                                userId?.let {
-                                    db.collection("users").document(it).set(userData)
-                                        .addOnSuccessListener {
-                                            Log.d("Firestore", "Datos del usuario guardados exitosamente.")
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            Log.e("FirestoreError", "Error al guardar en Firestore: ${exception.message}")
-                                        }
-                                }
+                                // Añadir un documento con un ID generado automáticamente
+                                db.collection("users")
+                                    .add(user)
+                                    .addOnSuccessListener { documentReference ->
+                                        Log.d("Firestore", "Documento añadido con ID: ${documentReference.id}")
+                                        navController.navigate(AppScreens.PantallaSeleccionRol.route)
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        Log.e("FirestoreError", "Error al guardar en Firestore: ${exception.message}")
+                                    }
                             } else {
                                 Log.e("ProfileError", "Error al actualizar el perfil: ${profileUpdateTask.exception?.message}")
                             }
@@ -77,10 +79,8 @@ fun RegistrationScreen(navController: NavController) {
                     Log.e("AuthError", "Error al registrar usuario: ${task.exception?.message}")
                 }
             }
-    }
 
-
-
+}
 
 
     Box(

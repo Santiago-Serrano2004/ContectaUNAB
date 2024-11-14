@@ -1,8 +1,4 @@
-package co.edu.unab.santiagoserrano.contectaunab.ui.theme
-
-import co.edu.unab.santiagoserrano.contectaunab.Horario
-import co.edu.unab.santiagoserrano.contectaunab.Reunion
-import co.edu.unab.santiagoserrano.contectaunab.SolicitudReunion
+package co.edu.unab.santiagoserrano.contectaunab
 
 open class User (
     val name:String,

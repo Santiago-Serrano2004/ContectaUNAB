@@ -1,6 +1,7 @@
 package co.edu.unab.santiagoserrano.contectaunab.screens
 
 import android.provider.ContactsContract.CommonDataKinds.Im
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -107,9 +108,17 @@ fun Settings(navController: NavController) {
         // Modify Schedule Button
         Button(
             onClick = {
-                FirebaseAuth.getInstance().signOut() // Cerrar sesión del usuario en Firebase
-                navController.navigate(AppScreens.PantallaInicio.route) {
-                    popUpTo(0) // Esto limpia el historial de navegación
+                FirebaseAuth.getInstance().signOut() // Sign out the user in Firebase
+
+                // Ensure the user is fully signed out
+                if (FirebaseAuth.getInstance().currentUser == null) {
+                    // Navigate back to the login screen and clear the navigation history
+                    navController.navigate(AppScreens.PantallaInicio.route) {
+                        popUpTo(0)
+                    }
+                } else {
+                    // Handle error if the user is not fully signed out (optional)
+                    Log.e("Auth", "Failed to sign out completely.")
                 }
             },
             modifier = Modifier
@@ -121,7 +130,7 @@ fun Settings(navController: NavController) {
             colors = ButtonDefaults.buttonColors(Color.Black)
         ) {
             Text(
-                text = "Cerrar Sesion",
+                text = "Cerrar Sesión",
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
