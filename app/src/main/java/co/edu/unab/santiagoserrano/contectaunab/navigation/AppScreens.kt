@@ -5,5 +5,6 @@ sealed class AppScreens (val route: String) {
     object Notifications: AppScreens("Notifications")
     object Profile: AppScreens("Profile")
     object Settings: AppScreens("Settings")
+    object PantallaCarga: AppScreens("PantallaCarga")
 
 }

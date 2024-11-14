@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import co.edu.unab.santiagoserrano.contectaunab.screens.Notifications
+import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaCarga
 import co.edu.unab.santiagoserrano.contectaunab.screens.PantallaPrincipalTutor
 import co.edu.unab.santiagoserrano.contectaunab.screens.Profile
 import co.edu.unab.santiagoserrano.contectaunab.screens.Settings
@@ -15,7 +16,11 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
     // NavHost: define las rutas y la acción a realizar para cada una
-    NavHost(navController = navController, startDestination = AppScreens.PantallaPrincipalTutor.route) {
+    NavHost(navController = navController, startDestination = AppScreens.PantallaCarga.route) {
+
+        composable(AppScreens.PantallaCarga.route) {
+            PantallaCarga(navController) }
+
         composable(AppScreens.PantallaPrincipalTutor.route) {
             PantallaPrincipalTutor(navController) }
 
