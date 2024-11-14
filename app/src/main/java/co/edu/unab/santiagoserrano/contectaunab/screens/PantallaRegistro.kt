@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import co.edu.unab.santiagoserrano.contectaunab.R
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
+import co.edu.unab.santiagoserrano.contectaunab.ui.theme.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.userProfileChangeRequest
@@ -55,11 +56,8 @@ fun RegistrationScreen(navController: NavController) {
                         ?.addOnCompleteListener { profileUpdateTask ->
                             if (profileUpdateTask.isSuccessful) {
                                 // Guardar datos del usuario en Firestore (sin la contraseña)
-                                val userData = mapOf(
-                                    "name" to name,
-                                    "email" to email,
-                                    "role" to "student" // ejemplo de campo adicional
-                                )
+                                val userData = User(name=name,password=password,email=email)
+
 
                                 userId?.let {
                                     db.collection("users").document(it).set(userData)
