@@ -154,7 +154,7 @@ fun TutoriasProgramadas() {
     // Estado para manejar las tutorías programadas (lista mutable)
     var tutorias by remember { mutableStateOf(
         listOf(
-            Tutoría("Ecuaciones Diferenciales", "vie. 16 agosto 2-3 p.m", "Nombre Estudiante", "Lugar de encuentro"),
+            Tutoria("Ecuaciones Diferenciales", "vie. 16 agosto 2-3 p.m", "Nombre Estudiante", "Lugar de encuentro"),
             // Agrega más tutorías si es necesario
         )
     )}
@@ -165,13 +165,13 @@ fun TutoriasProgramadas() {
 
     // Mostrar las tutorías programadas
     LazyColumn {
-        items(tutorias) { tutoría ->
-            TutoríaCard(
-                tutoría = tutoría,
+        items(tutorias) { tutoria ->
+            TutoriaCard(
+                tutoria = tutoria,
                 showCancelButton = showCancelButton,
-                onCancelClick = { tutoría ->
+                onCancelClick = { tutoria ->
                     // Lógica para cancelar la tutoría
-                    tutorias = tutorias.filterNot { it == tutoría } // Elimina la tutoría de la lista
+                    tutorias = tutorias.filterNot { it == tutoria } // Elimina la tutoría de la lista
                     showCancelButton = false // Cierra el botón de cancelación
                 },
                 onClick = { showCancelButton = !showCancelButton }
@@ -181,10 +181,10 @@ fun TutoriasProgramadas() {
 }
 
 @Composable
-fun TutoríaCard(
-    tutoría: Tutoría,
+fun TutoriaCard(
+    tutoria: Tutoria,
     showCancelButton: Boolean,
-    onCancelClick: (Tutoría) -> Unit,
+    onCancelClick: (Tutoria) -> Unit,
     onClick: () -> Unit
 ) {
     Card(
@@ -220,17 +220,17 @@ fun TutoríaCard(
                 // Información de la tutoría
                 Column {
                     Text(
-                        text = tutoría.nombre,
+                        text = tutoria.nombre,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = tutoría.fecha,
+                        text = tutoria.fecha,
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
                     Text(
-                        text = "${tutoría.estudiante}, ${tutoría.lugar}",
+                        text = "${tutoria.estudiante}, ${tutoria.lugar}",
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
@@ -241,7 +241,7 @@ fun TutoríaCard(
             if (showCancelButton) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { onCancelClick(tutoría) }, // Al hacer clic, elimina la tutoría
+                    onClick = { onCancelClick(tutoria) }, // Al hacer clic, elimina la tutoría
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp)
@@ -257,7 +257,7 @@ fun TutoríaCard(
     }
 }
 
-data class Tutoría(
+data class Tutoria(
     val nombre: String,
     val fecha: String,
     val estudiante: String,
