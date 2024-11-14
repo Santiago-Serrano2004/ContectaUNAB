@@ -23,6 +23,7 @@ import co.edu.unab.santiagoserrano.contectaunab.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -39,48 +40,50 @@ fun RegistrationScreen(navController: NavController) {
     var errorMessage by remember { mutableStateOf("") }
 
     fun registerUser(name: String, email: String, password: String) {
-        val auth = Firebase.auth
-        val db = Firebase.firestore // Usando el acceso directo a Firestore
+        val auth = FirebaseAuth.getInstance()
+        val database = FirebaseDatabase.getInstance() // Initialize database here
 
-        // Registro del usuario en Firebase Authentication
+        // Register the user with Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Obtener el UID del usuario registrado
+                    // Get the user ID of the registered user
                     val userId = auth.currentUser?.uid
 
-                    // Actualizar el perfil para incluir el nombre del usuario
-                    val userProfileUpdates = UserProfileChangeRequest.Builder()
+                    // Update profile to include the user's display name
+                    val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
                         .build()
 
-                    auth.currentUser?.updateProfile(userProfileUpdates)
-                        ?.addOnCompleteListener { profileUpdateTask ->
-                            if (profileUpdateTask.isSuccessful) {
-                                // Guardar datos del usuario en Firestore (sin la contraseña)
-                                val user = User(name=name, password = password,email=email)
+                    auth.currentUser?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { profileTask ->
+                            if (profileTask.isSuccessful) {
+                                // Prepare user data (excluding password)
+                                val userData = mapOf(
+                                    "name" to name,
+                                    "email" to email
+                                )
 
-                                // Añadir un documento con un ID generado automáticamente
-                                db.collection("users")
-                                    .add(user)
-                                    .addOnSuccessListener { documentReference ->
-                                        Log.d("Firestore", "Documento añadido con ID: ${documentReference.id}")
-                                        navController.navigate(AppScreens.PantallaSeleccionRol.route)
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        Log.e("FirestoreError", "Error al guardar en Firestore: ${exception.message}")
-                                    }
+                                // Save user data in Realtime Database under "users/{userId}"
+                                userId?.let { uid ->
+                                    database.getReference("users").child(uid).setValue(userData)
+                                        .addOnSuccessListener {
+                                            Log.d("Database", "User data saved successfully.")
+                                            // Optionally, call a function to read data back if needed
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.e("DatabaseError", "Error saving user data: ${exception.message}")
+                                        }
+                                }
                             } else {
-                                Log.e("ProfileError", "Error al actualizar el perfil: ${profileUpdateTask.exception?.message}")
+                                Log.e("ProfileError", "Error updating profile: ${profileTask.exception?.message}")
                             }
                         }
-                    navController.navigate(AppScreens.PantallaSeleccionRol.route)
                 } else {
-                    Log.e("AuthError", "Error al registrar usuario: ${task.exception?.message}")
+                    Log.e("AuthError", "Error registering user: ${task.exception?.message}")
                 }
             }
-
-}
+    }
 
 
     Box(
