@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,37 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.runtime.*
-import androidx.room.Delete
-
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-@Preview(showBackground = true)
-
-fun StudentMainScreen() {
-
-    MaterialTheme(
-        typography = Typography,
-        shapes = Shapes,
-        colorScheme = MaterialTheme.colorScheme
-    ) {
-        Scaffold(topBar = {StudentMainHeader()},
-            content = { paddingValues ->
-                // El contenido principal de la pantalla
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues) // Respetamos los valores de padding del Scaffold
-                ) {
-                    StudentMainContent()
-                    AreasExperticiaScreen()
-                }
-            }
-                ,
-            bottomBar = { StudentMainNavBar() })
-
-    }
-}
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
 
 @Preview
 @Composable
@@ -206,7 +179,7 @@ fun TutoriaCard(
             ) {
                 // Ícono de la tutoría
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_background), // Reemplaza con el recurso de tu ícono
+                    painter = painterResource(id = R.drawable.birrete), // Reemplaza con el recurso de tu ícono
                     contentDescription = "Icono de Tutoría",
                     modifier = Modifier
                         .size(40.dp)
@@ -264,9 +237,9 @@ data class Tutoria(
     val lugar: String
 )
 
-@Preview
 @Composable
-fun StudentMainNavBar() {
+fun StudentMainNavBar(navController: NavController) {
+
 
     val homeIcon: Painter = painterResource(id = R.drawable.home_icon)
     val notificationIcon: Painter = painterResource(id = R.drawable.notification_icon)
@@ -283,16 +256,16 @@ fun StudentMainNavBar() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* Acción para el botón de inicio */ }) {
+            IconButton(onClick = { navController.navigate(AppScreens.PantallaPrincipalTutor)}) {
                 Icon(painter = homeIcon, contentDescription = "Home", tint = Color.White)
             }
-            IconButton(onClick = { /* Acción para el botón de notificaciones */ }) {
+            IconButton(onClick = { navController.navigate(AppScreens.Notifications) }) {
                 Icon(painter = notificationIcon, contentDescription = "Notifications", tint = Color.White)
             }
-            IconButton(onClick = { /* Acción para el botón de ajustes */ }) {
+            IconButton(onClick = {  navController.navigate(AppScreens.Settings) }) {
                 Icon(painter = settingsIcon, contentDescription = "Settings", tint = Color.White)
             }
-            IconButton(onClick = { /* Acción para el botón de perfil */ }) {
+            IconButton(onClick = { navController.navigate(AppScreens.Profile) }) {
                 Icon(painter = profileIcon, contentDescription = "Profile", tint = Color.Unspecified)
             }
         }
@@ -334,7 +307,7 @@ fun AreasExperticiaScreen() {
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(text = area.nombre)
                         Spacer(modifier = Modifier.weight(1f))
@@ -343,7 +316,7 @@ fun AreasExperticiaScreen() {
                             areaAEliminar = area
                             showDeleteDialog = true // Show the confirmation dialog
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.borrar), contentDescription = "Eliminar", tint = Color.Unspecified)
+                            Icon(painter = painterResource(id = R.drawable.borrar), contentDescription = "Eliminar", tint = Color.Unspecified, modifier = Modifier.size(25.dp))
                         }
                     }
                 }
@@ -426,21 +399,9 @@ fun AreasExperticiaScreen() {
 }
 
 
-private val Typography = Typography(
-    bodyLarge = androidx.compose.ui.text.TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-)
 
-private val Shapes = Shapes(
-    small = RoundedCornerShape(4.dp),
-    medium = RoundedCornerShape(4.dp),
-    large = RoundedCornerShape(0.dp)
-    
-)
+
+
 
 
 
