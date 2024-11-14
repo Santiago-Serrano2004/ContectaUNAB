@@ -4,15 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,19 +15,34 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import co.edu.unab.santiagoserrano.contectaunab.R
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
-
-
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    val auth = FirebaseAuth.getInstance()
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+
+    fun loginUser() {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    navController.navigate(AppScreens.PantallaSeleccionRol.route)
+                } else {
+                    errorMessage = task.exception?.message ?: "Error al iniciar sesión"
+                }
+            }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF6A0DAD)), // Purple background
+            .background(Color(0xFF6A0DAD)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -47,11 +55,9 @@ fun LoginScreen(navController: NavController) {
             Image(
                 painter = painterResource(id = R.drawable.unab_logo),
                 contentDescription = "Logo UNAB",
-                modifier = Modifier.size(250.dp),
-                alignment = Alignment.CenterEnd
+                modifier = Modifier.size(250.dp)
             )
 
-            // Title
             Text(
                 text = "INICIO DE SESION",
                 color = Color.Black,
@@ -59,36 +65,42 @@ fun LoginScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            Card(modifier = Modifier.padding(horizontal = 4.dp))
-            {
-                Column(modifier = Modifier.padding(6.dp))
-                {
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("ID ESTUDIANTE UNAB") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
 
+            Card(modifier = Modifier.padding(horizontal = 4.dp)) {
+                Column(modifier = Modifier.padding(6.dp)) {
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("EMAIL") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
 
-                )
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("CONTRASEÑA") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                )
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("CONTRASEÑA") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+
+                    if (errorMessage.isNotEmpty()) {
+                        Text(
+                            text = errorMessage,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                 }
             }
 
-            // Login Button
             Button(
-                onClick = {navController.navigate(AppScreens.PantallaSeleccionRol.route)},
+                onClick = { loginUser() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),

@@ -25,17 +25,17 @@ import kotlinx.coroutines.delay
 fun PantallaCarga(navController: NavController){
     LaunchedEffect(key1 = true) {
         delay(3000)
-        navController.popBackStack()
-        navController.navigate(AppScreens.PantallaInicio.route)
+        // Limpiar la pila de navegación, eliminando todas las pantallas anteriores
+        navController.popBackStack(AppScreens.PantallaCarga.route, inclusive = true)
+        navController.navigate(AppScreens.Verificar.route)
     }
 
-
     Column(
-    modifier = Modifier
-    .fillMaxSize()
-    .background(Color(0xFF6A0DAD)),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF6A0DAD)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.unab_logo),

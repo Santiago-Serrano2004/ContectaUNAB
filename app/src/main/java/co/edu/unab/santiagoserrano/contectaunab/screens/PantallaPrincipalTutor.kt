@@ -20,29 +20,31 @@ import co.edu.unab.santiagoserrano.contectaunab.StudentMainContent
 import co.edu.unab.santiagoserrano.contectaunab.StudentMainHeader
 import co.edu.unab.santiagoserrano.contectaunab.StudentMainNavBar
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-
 fun PantallaPrincipalTutor(navController: NavController) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val userName = user?.displayName ?: "Usuario" // Obtener nombre o poner "Usuario" por defecto
 
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme
     ) {
-        Scaffold(topBar = { StudentMainHeader() },
+        Scaffold(
+            topBar = {
+                StudentMainHeader() // Pasamos el nombre del usuario al encabezado
+            },
             content = { paddingValues ->
-                // El contenido principal de la pantalla
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues) // Respetamos los valores de padding del Scaffold
                 ) {
-                    StudentMainContent()
+                    StudentMainContent(userName = userName)
                     AreasExperticiaScreen()
                 }
-            }
-            ,
-            bottomBar = { StudentMainNavBar(navController = navController) })
-
+            },
+            bottomBar = { StudentMainNavBar(navController = navController) }
+        )
     }
 }
-

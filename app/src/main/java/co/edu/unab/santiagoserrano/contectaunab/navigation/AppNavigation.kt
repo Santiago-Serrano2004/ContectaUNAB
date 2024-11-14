@@ -22,8 +22,10 @@ import co.edu.unab.santiagoserrano.contectaunab.screens.Profile
 import co.edu.unab.santiagoserrano.contectaunab.screens.RegistrationScreen
 import co.edu.unab.santiagoserrano.contectaunab.screens.RoleSelectionScreen
 import co.edu.unab.santiagoserrano.contectaunab.screens.Settings
+import co.edu.unab.santiagoserrano.contectaunab.screens.Verificar
 
 import co.edu.unab.santiagoserrano.contectaunab.screens.WelcomeScreen
+
 
 @Composable
 fun AppNavigation() {
@@ -36,6 +38,9 @@ fun AppNavigation() {
 
         composable(AppScreens.PantallaCarga.route) {
             PantallaCarga(navController) }
+
+        composable(AppScreens.Verificar.route) {
+            Verificar(navController) }
 
         composable(AppScreens.PantallaPrincipalTutor.route) {
             PantallaPrincipalTutor(navController) }

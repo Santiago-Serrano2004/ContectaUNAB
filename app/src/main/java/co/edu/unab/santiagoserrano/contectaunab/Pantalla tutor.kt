@@ -30,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import co.edu.unab.santiagoserrano.contectaunab.navigation.AppScreens
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -55,14 +56,14 @@ fun StudentMainHeader() { // Agrega los recursos necesarios aquí
 }
 
 @Composable
-fun StudentMainContent() {
-    PerfilTutor()
+fun StudentMainContent(userName: String) {
+    PerfilTutor(userName)
     TutoriasProgramadas()
 }
 
-@Preview
 @Composable
-fun PerfilTutor() {
+fun PerfilTutor(userName: String) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,7 +91,7 @@ fun PerfilTutor() {
                 fontSize = 18.sp
             )
             Text(
-                text = "Nombre Tutor",
+                text = userName, // Nombre dinámico obtenido desde Firebase
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -117,6 +118,8 @@ fun PerfilTutor() {
         }
     }
 }
+
+
 
 @Preview
 @Composable
