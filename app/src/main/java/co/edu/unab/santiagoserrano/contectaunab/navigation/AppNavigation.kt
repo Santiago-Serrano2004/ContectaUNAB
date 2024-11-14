@@ -6,9 +6,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import co.edu.unab.santiagoserrano.contectaunab.R
 import co.edu.unab.santiagoserrano.contectaunab.screens.IngresoHorario
 import co.edu.unab.santiagoserrano.contectaunab.screens.LoginScreen
@@ -19,6 +21,7 @@ import co.edu.unab.santiagoserrano.contectaunab.screens.Profile
 import co.edu.unab.santiagoserrano.contectaunab.screens.RegistrationScreen
 import co.edu.unab.santiagoserrano.contectaunab.screens.RoleSelectionScreen
 import co.edu.unab.santiagoserrano.contectaunab.screens.Settings
+
 import co.edu.unab.santiagoserrano.contectaunab.screens.WelcomeScreen
 
 @Composable
@@ -42,9 +45,10 @@ fun AppNavigation() {
         composable(AppScreens.Notifications.route){
             Notifications(navController) }
 
+
         composable(AppScreens.Settings.route){
-            Settings(navController)
-        }
+            Settings(navController) }
+
 
         composable(AppScreens.PantallaInicio.route){
             WelcomeScreen(navController)
